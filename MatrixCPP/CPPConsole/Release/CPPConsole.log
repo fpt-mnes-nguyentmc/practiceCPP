@@ -1,0 +1,9 @@
+﻿  CPPConsole.cpp
+CPPConsole.cpp(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Generating code
+  1 of 28 functions ( 3.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  CPPConsole.vcxproj -> c:\users\tmcnguyen\documents\visual studio 2015\Projects\CPPConsole\Release\CPPConsole.exe
+  CPPConsole.vcxproj -> c:\users\tmcnguyen\documents\visual studio 2015\Projects\CPPConsole\Release\CPPConsole.pdb (Full PDB)
