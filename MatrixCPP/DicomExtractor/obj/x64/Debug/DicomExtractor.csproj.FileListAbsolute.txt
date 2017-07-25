@@ -1,0 +1,12 @@
+D:\FPT_AMED\SourceCode\Output\Debug\DicomExtractor.exe.config
+D:\FPT_AMED\SourceCode\Output\Debug\DicomExtractor.exe
+D:\FPT_AMED\SourceCode\Output\Debug\DicomExtractor.pdb
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\MainWindow.baml
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\MainWindow.g.cs
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\App.g.cs
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\DicomExtractor_MarkupCompile.cache
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\DicomExtractor.g.resources
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\DicomExtractor.Properties.Resources.resources
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\DicomExtractor.csproj.GenerateResource.Cache
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\DicomExtractor.exe
+D:\FPT_AMED\SourceCode\Source\DicomExtractor\obj\x64\Debug\DicomExtractor.pdb

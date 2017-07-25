@@ -1,0 +1,18 @@
+﻿Build started 7/25/2017 6:03:46 PM.
+     1>Project "D:\FPT_AMED\SourceCode\Source\Gamma3DLogic\Gamma3DLogic.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "x64\Release\Gamma3DLogic.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\CL.exe /c /I./Headers /I..\BasicWrapper\Headers /Zi /nologo /W1 /WX- /O2 /D _MBCS /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /openmp /Fo"x64\Release\\" /Fd"x64\Release\vc100.pdb" /Gd /TP /errorReport:prompt CPPs\Gamma3DLogic.cpp
+         Gamma3DLogic.cpp
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\Lib.exe /OUT:"..\..\Output\Release\Gamma3DLogic.lib" /LIBPATH:..\..\Output\Release /NOLOGO x64\Release\Gamma3DLogic.obj
+         Gamma3DLogic.vcxproj -> D:\FPT_AMED\SourceCode\Source\Gamma3DLogic\..\..\Output\Release\Gamma3DLogic.lib
+       FinalizeBuildStatus:
+         Deleting file "x64\Release\Gamma3DLogic.unsuccessfulbuild".
+         Touching "x64\Release\Gamma3DLogic.lastbuildstate".
+     1>Done Building Project "D:\FPT_AMED\SourceCode\Source\Gamma3DLogic\Gamma3DLogic.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.97

@@ -1,0 +1,20 @@
+﻿Build started 7/25/2017 5:52:21 PM.
+     1>Project "D:\FPT_AMED\SourceCode\Source\BasicWrapper\BasicWrapper.vcxproj" on node 3 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "x64\Debug\BasicWrapper.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       ClCompile:
+         All outputs are up-to-date.
+         All outputs are up-to-date.
+       Link:
+         All outputs are up-to-date.
+         BasicWrapper.vcxproj -> D:\FPT_AMED\SourceCode\Source\BasicWrapper\..\..\Output\Debug\BasicWrapper.dll
+       FinalizeBuildStatus:
+         Deleting file "x64\Debug\BasicWrapper.unsuccessfulbuild".
+         Touching "x64\Debug\BasicWrapper.lastbuildstate".
+     1>Done Building Project "D:\FPT_AMED\SourceCode\Source\BasicWrapper\BasicWrapper.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.01

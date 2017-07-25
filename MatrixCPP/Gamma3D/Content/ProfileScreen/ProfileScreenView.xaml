@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="Gamma3D.Content.Controls.ProfileScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="920" d:DesignWidth="1535">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="18"/>
+            <ColumnDefinition Width="18"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="10, 10, 0, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="30">Profile Screen</Label>
+                <Label Grid.Row="2" VerticalContentAlignment="Center" FontSize="12">Display Profile Center</Label>
+
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="X" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtXValue"/>
+                </Grid>
+
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Y" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtYValue"/>
+                </Grid>
+
+                <Grid  Grid.Row="7">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Z" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtZValue"/>
+                </Grid>
+
+                <Label Grid.Row="9" VerticalContentAlignment="Center" FontSize="12">Normalization Factor</Label>
+
+                <Grid Grid.Row="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="N" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtNormalizationFactor"/>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="10"/>
+                </Grid.RowDefinitions>
+
+                <Button Name="btnApply_ProfileScreen" Grid.Row="1" Grid.Column="1" Content="Apply" Click="btnApply_ProfileScreen_Click" />
+                <Button Name="btnNext_ProfileScreen" Grid.Row="3" Grid.Column="1" Content="Next" Click="btnNext_ProfileScreen_Click" />
+            </Grid>
+        </Grid>
+
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="0, 0, 1, 0"></Border>
+
+        <Grid Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0, 0, 0, 1"></Border>
+            <Border Grid.Row="4" BorderBrush="Gray" BorderThickness="0, 0, 0, 1"></Border>
+        </Grid>
+    </Grid>
+</UserControl>

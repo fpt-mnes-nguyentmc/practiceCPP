@@ -1,0 +1,12 @@
+D:\FPT_AMED\SourceCode\Output\Release\Gamma3D.exe.config
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Gamma3D.csprojResolveAssemblyReference.cache
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Content\InputScreen\InputScreenView.baml
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Content\ProfileScreen\ProfileScreenView.baml
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Content\GammaScreen\GammaScreenView.g.cs
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Content\InputScreen\InputScreenView.g.cs
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Content\ProfileScreen\ProfileScreenView.g.cs
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Gamma3DView.g.cs
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\App.g.cs
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\GeneratedInternalTypeHelper.g.cs
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Gamma3D_MarkupCompile.cache
+D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Release\Gamma3D_MarkupCompile.lref

@@ -1,0 +1,167 @@
+﻿<UserControl x:Class="Gamma3D.Content.Controls.GammaScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:customCtrls="clr-namespace:Gamma3D.Content.CustomControls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="920" d:DesignWidth="1535">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="18"/>
+            <ColumnDefinition Width="18"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="10, 10, 0, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="30">Profile γ-index</Label>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Plane" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <Border Grid.Column="1" Padding="3" BorderBrush="#aaa" BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="68"/>
+                                <ColumnDefinition Width="60"/>
+                            </Grid.ColumnDefinitions>
+                            <RadioButton Grid.Column="0" Content="Axial" IsChecked="True" Name="radioAxial" Click="radioAxial_Click"/>
+                            <RadioButton Grid.Column="1" Content="Coronal" Name="radioCoronal" Click="radioCoronal_Click" />
+                            <RadioButton Grid.Column="2" Content="Sagital" Name="radioSagital" Click="radioSagital_Click" />
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Z" Background="#555" Foreground="White" HorizontalContentAlignment="Center" Name="labelPosition"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtPositionValue"/>
+                </Grid>
+
+                <Grid Grid.Row="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Δd" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtLargestPositionTolerance"/>
+                </Grid>
+
+                <Grid Grid.Row="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="ΔD" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtLargestDoseTolerance"/>
+                </Grid>
+
+                <Grid Grid.Row="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="DMin" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtThresholdDose"/>
+                </Grid>
+
+                <Grid Grid.Row="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Radius" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtRadius"/>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="15"/>
+                </Grid.RowDefinitions>
+
+                <Button Name="btnApply_GammaScreen" Grid.Row="1" Grid.Column="1" Content="Apply" Click="btnApply_GammaScreen_Click" />
+            </Grid>
+        </Grid>
+
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="0, 0, 1, 0"></Border>
+
+        <Grid Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="200"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <customCtrls:ImageHost x:Name="ctrlImageHost" />
+
+                <Grid Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Rectangle Stroke="#aaa" StrokeThickness="2">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush>
+                                <GradientStop Color="Red" Offset="0.0"/>
+                                <GradientStop Color="White" Offset="0.15"/>
+                                <GradientStop Color="Blue" Offset="0.35"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+            </Grid>
+
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0, 0, 0, 1"></Border>
+        </Grid>
+    </Grid>
+</UserControl>
