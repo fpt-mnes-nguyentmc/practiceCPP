@@ -13,21 +13,16 @@ namespace Gamma3D.Content.CustomControls
     public class ImageHost : HwndHost
     {
         /// <summary>
-        /// The HWND host
-        /// </summary>
-        private IntPtr hwndHost;
-
-        /// <summary>
-        /// Gets the HWND host.
+        /// Gets the logic.
         /// </summary>
         /// <value>
-        /// The HWND host.
+        /// The logic.
         /// </value>
-        public IntPtr HwndHost
+        public Gamma3DLogic Logic
         {
             get
             {
-                return this.hwndHost;
+                return this.DataContext as Gamma3DLogic;
             }
         }
 
@@ -46,16 +41,6 @@ namespace Gamma3D.Content.CustomControls
         /// </summary>
         public ImageHost()
         {
-            this.hwndHost = Common.NativeMethods.CreateWindowEx(0, "static", "",
-                (int)(Common.Constants.WS_CHILD),
-                0, 0,
-                1, 1,
-                Common.Variables.WindowHandle,
-                (IntPtr)Common.Constants.HOST_ID,
-                IntPtr.Zero,
-                0);
-
-            SetBackgroundColor();
         }
 
         /// <summary>
@@ -126,38 +111,35 @@ namespace Gamma3D.Content.CustomControls
         /// </returns>
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
-            if (hwndHost == IntPtr.Zero)
-            {
-                hwndHost = Common.NativeMethods.CreateWindowEx(0, "static", "",
-                    (int)(Common.Constants.WS_CHILD),
-                    0, 0,
-                    1, 1,
-                    hwndParent.Handle,
-                    (IntPtr)Common.Constants.HOST_ID,
-                    IntPtr.Zero,
-                    0);
+            var hwnd = Common.NativeMethods.CreateWindowEx(0, "static", "",
+                                                           (int)(Common.Constants.WS_CHILD),
+                                                           0, 0,
+                                                           1, 1,
+                                                           hwndParent.Handle,
+                                                           (IntPtr)Common.Constants.HOST_ID,
+                                                           IntPtr.Zero,
+                                                           0);
 
-                SetBackgroundColor();
-            }
+            this.Logic.SetImageHostHandle(hwnd);
 
-            Common.NativeMethods.SetParent(hwndHost, hwndParent.Handle);
-            return new HandleRef(this, hwndHost);
+            Common.NativeMethods.SetParent(hwnd, hwndParent.Handle);
+            return new HandleRef(this, hwnd);
         }
 
         /// <summary>
         /// Sets the color of the background.
         /// </summary>
-        internal void SetBackgroundColor()
+        private void SetBackgroundColor()
         {
-            if (this.hwndHost != null && this.hwndHost != IntPtr.Zero)
+            if (this.Handle != null && this.Handle != IntPtr.Zero)
             {
                 Common.NativeMethods.RECT rect;
-                var hDC = Common.NativeMethods.GetDC(this.hwndHost);
+                var hDC = Common.NativeMethods.GetDC(this.Handle);
 
-                Common.NativeMethods.GetClientRect(this.hwndHost, out rect);
+                Common.NativeMethods.GetClientRect(this.Handle, out rect);
                 Common.NativeMethods.SetBkColor(hDC, Common.Constants.CL_BLUE);
                 Common.NativeMethods.ExtTextOut(hDC, 0, 0, 0x2, ref rect, null, 0, IntPtr.Zero);
-                Common.NativeMethods.ReleaseDC(this.hwndHost, hDC);
+                Common.NativeMethods.ReleaseDC(this.Handle, hDC);
             }
         }
     }

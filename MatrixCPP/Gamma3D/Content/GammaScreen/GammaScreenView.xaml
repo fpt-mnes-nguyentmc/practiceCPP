@@ -68,7 +68,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Z" Background="#555" Foreground="White" HorizontalContentAlignment="Center" Name="labelPosition"/>
-                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtPositionValue"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtPositionValue" Text="150"/>
                 </Grid>
 
                 <Grid Grid.Row="6">
@@ -77,7 +77,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Δd" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
-                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtLargestPositionTolerance"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtLargestPositionTolerance" Text="1.0"/>
                 </Grid>
 
                 <Grid Grid.Row="8">
@@ -86,7 +86,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="ΔD" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
-                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtLargestDoseTolerance"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtLargestDoseTolerance" Text="1.0"/>
                 </Grid>
 
                 <Grid Grid.Row="10">
@@ -95,7 +95,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="DMin" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
-                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtThresholdDose"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtThresholdDose" Text="1.0"/>
                 </Grid>
 
                 <Grid Grid.Row="12">
@@ -104,7 +104,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Radius" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
-                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtRadius"/>
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Name="txtRadius" Text="5"/>
                 </Grid>
             </Grid>
 
@@ -120,7 +120,7 @@
                     <RowDefinition Height="15"/>
                 </Grid.RowDefinitions>
 
-                <Button Name="btnApply_GammaScreen" Grid.Row="1" Grid.Column="1" Content="Apply" Click="btnApply_GammaScreen_Click" />
+                <Button Name="btnApply" Grid.Row="1" Grid.Column="1" Content="Apply" Click="btnApply_Click" />
             </Grid>
         </Grid>
 

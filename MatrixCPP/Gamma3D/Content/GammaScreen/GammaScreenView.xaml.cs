@@ -46,6 +46,7 @@ namespace Gamma3D.Content.Controls
         #endregion
 
         #region Initilize
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfileScreenView"/> class.
         /// </summary>
@@ -53,6 +54,7 @@ namespace Gamma3D.Content.Controls
         {
             InitializeComponent();
         }
+
         #endregion       
 
         #region Events Hanlder
@@ -61,9 +63,41 @@ namespace Gamma3D.Content.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnApply_GammaScreen_Click(object sender, RoutedEventArgs e)
+        private void btnApply_Click(object sender, RoutedEventArgs e)
         {
-            
+            var plan = GammaPlaneEnum.Axial;
+            int posPlan = 0;
+            double maxDeltaDose = 0;
+            double maxDeltaPos = 0;
+            double radius = 0;
+            double thresholdDoseMin = 0;
+
+            if (int.TryParse(this.txtPositionValue.Text.Trim(), out posPlan) == false)
+            {
+                // TODO: Abnormal case
+            }
+
+            if (double.TryParse(this.txtLargestDoseTolerance.Text.Trim(), out maxDeltaDose) == false)
+            {
+                // TODO: Abnormal case
+            }
+
+            if (double.TryParse(this.txtLargestPositionTolerance.Text.Trim(), out maxDeltaPos) == false)
+            {
+                // TODO: Abnormal case
+            }
+
+            if (double.TryParse(this.txtRadius.Text.Trim(), out radius) == false)
+            {
+                // TODO: Abnormal case
+            }
+
+            if (double.TryParse(this.txtThresholdDose.Text.Trim(), out thresholdDoseMin) == false)
+            {
+                // TODO: Abnormal case
+            }
+
+            this.Logic.SetGammaInputParam(plan, posPlan, maxDeltaDose, maxDeltaPos, radius, thresholdDoseMin);
         }
 
         /// <summary>
@@ -95,7 +129,6 @@ namespace Gamma3D.Content.Controls
         {
             this.labelPosition.Content = "X";
         }
-
         
         #endregion
 

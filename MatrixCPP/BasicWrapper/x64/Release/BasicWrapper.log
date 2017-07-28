@@ -1,6 +1,8 @@
-﻿Build started 7/25/2017 6:03:46 PM.
-     1>Project "D:\FPT_AMED\SourceCode\Source\BasicWrapper\BasicWrapper.vcxproj" on node 3 (build target(s)).
-     1>InitializeBuildStatus:
+﻿Build started 7/26/2017 9:07:05 AM.
+     1>Project "D:\FPT_AMED\SourceCode\Source\BasicWrapper\BasicWrapper.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "x64\Release\BasicWrapper.lastbuildstate".
+       InitializeBuildStatus:
          Creating "x64\Release\BasicWrapper.unsuccessfulbuild" because "AlwaysCreate" was specified.
        GenerateTargetFrameworkMonikerAttribute:
        Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
@@ -18,8 +20,8 @@
        FinalizeBuildStatus:
          Deleting file "x64\Release\BasicWrapper.unsuccessfulbuild".
          Touching "x64\Release\BasicWrapper.lastbuildstate".
-     1>Done Building Project "D:\FPT_AMED\SourceCode\Source\BasicWrapper\BasicWrapper.vcxproj" (build target(s)).
+     1>Done Building Project "D:\FPT_AMED\SourceCode\Source\BasicWrapper\BasicWrapper.vcxproj" (rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.10
+Time Elapsed 00:00:01.11

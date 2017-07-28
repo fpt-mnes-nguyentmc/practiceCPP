@@ -74,22 +74,57 @@ namespace Gamma3D.Content
 
         #region Functions
         /// <summary>
+        /// Sets the window handle.
+        /// </summary>
+        /// <param name="pHwnd">The p HWND.</param>
+        public void SetImageHostHandle(IntPtr pHwnd)
+        {
+            this.wrapper.SetImageHostHandle(pHwnd);
+        }
+
+        /// <summary>
         /// Extracts the volume file.
         /// </summary>
         /// <param name="evalFilePath">The eval file path.</param>
         /// <param name="refFlePath">The reference fle path.</param>
         public void ExtractVolumeFile(string evalFilePath, string refFlePath)
         {
-            wrapper.ExtractGammaVolume(evalFilePath, refFlePath);
+            this.wrapper.ExtractGammaVolume(evalFilePath, refFlePath);
         }
 
         /// <summary>
-        /// 
+        /// Switches the tab.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">The index.</param>
         public void SwitchTab(int index)
         {
             
+        }
+
+        /// <summary>
+        /// Inputs the gamma screen.
+        /// </summary>
+        public void SetGammaInputParam(GammaPlaneEnum plane, int posPlan, double maxDeltaDose,
+            double maxDeltaPos, double radius, double thresholdDoseMin)
+        {
+            var gammaModel = new GammaInputModel();
+
+            gammaModel.Plane = plane;
+            gammaModel.PosPlan = posPlan;
+            gammaModel.MaxDeltaDose = maxDeltaDose;
+            gammaModel.MaxDeltaPos = maxDeltaPos;
+            gammaModel.Radius = radius;
+            gammaModel.ThresholdDoseMin = thresholdDoseMin;
+
+            this.wrapper.SetGammaInputParam(gammaModel);
+        }
+
+        /// <summary>
+        /// Extract Gamma Volume To Axis.
+        /// </summary>
+        public void ExtractGammaVolumeToAxis(Int32 iXAxis, Int32 iYAxis, Int32 iZAxis, Double dNormalize)
+        {
+            this.wrapper.ExtractGammaVolumeToAxis(iXAxis, iYAxis, iZAxis, dNormalize);
         }
         #endregion
     }

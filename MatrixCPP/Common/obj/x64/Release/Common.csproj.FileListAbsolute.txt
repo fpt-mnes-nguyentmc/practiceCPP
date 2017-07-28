@@ -1,0 +1,2 @@
+D:\FPT_AMED\SourceCode\Output\Release\Common.dll
+D:\FPT_AMED\SourceCode\Source\Common\obj\x64\Release\Common.dll

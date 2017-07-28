@@ -113,7 +113,7 @@ namespace Gamma3D.Content.Controls
         {
             this.Logic.isImportVolFile = checkImportVolFile();
 
-            //this.Logic.ExtractVolumeFile(this.txtEvalFile.Text.Trim(), this.txtRefFile.Text.Trim());
+            this.Logic.ExtractVolumeFile(this.txtEvalFile.Text.Trim(), this.txtRefFile.Text.Trim());
         }
 
         #endregion               

@@ -1,7 +1,10 @@
-﻿Build started 7/25/2017 6:03:47 PM.
-     1>Project "D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\Gamma3DWrapper.vcxproj" on node 3 (build target(s)).
-     1>InitializeBuildStatus:
-         Creating "x64\Release\Gamma3DWrapper.unsuccessfulbuild" because "AlwaysCreate" was specified.
+﻿Build started 7/26/2017 9:07:07 AM.
+     1>Project "D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\Gamma3DWrapper.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "x64\Release\Gamma3DWrapper.lastbuildstate".
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppClean.targets(74,5): warning : Access to the path 'D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\x64\Release\CL.read.1.tlog' is denied.
+       InitializeBuildStatus:
+         Touching "x64\Release\Gamma3DWrapper.unsuccessfulbuild".
        GenerateTargetFrameworkMonikerAttribute:
        Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
        ClCompile:
@@ -9,20 +12,13 @@
          AssemblyInfo.cpp
          Gamma3DWrapper.cpp
          Generating Code...
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\CL.exe /c /I./Headers /I..\BasicWrapper\Headers /I..\Gamma3DLogic\Headers /Zi /clr /nologo /W1 /WX- /O2 /D _WINDLL /D _MBCS /EHa /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc100.pdb" /TP /errorReport:prompt "C:\Users\nguyentmc\AppData\Local\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cpp"
-         .NETFramework,Version=v4.0.AssemblyAttributes.cpp
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"..\..\Output\Release\Gamma3DWrapper.dll" /NOLOGO /LIBPATH:..\..\Output\Release Gamma3DLogic.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"x64\Release\Gamma3DWrapper.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /PDB:"D:\FPT_AMED\SourceCode\Output\Release\Gamma3DWrapper.pdb" /TLBID:1 /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X64 /DLL x64\Release\AssemblyInfo.obj
-         x64\Release\Gamma3DWrapper.obj
-         "x64\Release\.NETFramework,Version=v4.0.AssemblyAttributes.obj"
-         Gamma3DWrapper.vcxproj -> D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\..\..\Output\Release\Gamma3DWrapper.dll
-       Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"..\..\Output\Release\Gamma3DWrapper.dll;#2" /manifest x64\Release\Gamma3DWrapper.dll.intermediate.manifest
-       FinalizeBuildStatus:
-         Deleting file "x64\Release\Gamma3DWrapper.unsuccessfulbuild".
-         Touching "x64\Release\Gamma3DWrapper.lastbuildstate".
-     1>Done Building Project "D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\Gamma3DWrapper.vcxproj" (build target(s)).
+     1>FileTracker : error FTK1011: could not create the new file tracking log file: D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\x64\Release\CL.read.1.tlog. Access is denied.
+         
+         
+         
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\x64\Microsoft.Cpp.x64.Targets(152,5): error MSB6003: The specified task executable "CL.exe" could not be run. Access to the path 'D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\x64\Release\cl.read.1.tlog' is denied.
+     1>Done Building Project "D:\FPT_AMED\SourceCode\Source\Gamma3DWrapper\Gamma3DWrapper.vcxproj" (rebuild target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:02.29
+Time Elapsed 00:00:01.41

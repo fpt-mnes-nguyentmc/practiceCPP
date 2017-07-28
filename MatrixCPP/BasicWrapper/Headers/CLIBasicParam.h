@@ -9,14 +9,36 @@
 #include <locale>
 #include <codecvt>
 #include <msclr\marshal_cppstd.h>
-#include <string>
 
 using namespace System;
 
 namespace CLI
 {
-	inline std::string ConvertFromUtf16ToUtf8(const std::wstring& wstr)
+#pragma region To-Unmanaged
+
+	static int ToUnmanaged(Int32 objInput)
 	{
+		return static_cast<int>(objInput);
+	}
+
+	static double ToUnmanaged(Double objInput)
+	{
+		return static_cast<double>(objInput);
+	}
+
+	static bool ToUnmanaged(Boolean objInput)
+	{
+		return static_cast<bool>(objInput);
+	}
+
+	static HWND ToUnmanaged(IntPtr^ objInput)
+	{
+		return (HWND)objInput->ToPointer();
+	}
+
+	static std::string ToUnmanaged(String^ objInput)
+	{
+		std::wstring wstr = msclr::interop::marshal_as<std::wstring>(objInput);
 		std::string convertedString;
 		int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, 0, 0, 0, 0);
 		if (requiredSize > 0)
@@ -28,8 +50,42 @@ namespace CLI
 		return convertedString;
 	}
 
-	std::string ToUnmanaged(System::String^ str)
+#pragma endregion
+
+#pragma region To-Managed
+
+	static Int32 ToManaged(const int& objInput)
 	{
-		return ConvertFromUtf16ToUtf8(msclr::interop::marshal_as<std::wstring>(str));
+		return static_cast<Int32>(objInput);
 	}
+
+	static Double ToManaged(const double& objInput)
+	{
+		return static_cast<Double>(objInput);
+	}
+
+	static Boolean ToManaged(const bool& objInput)
+	{
+		return static_cast<Boolean>(objInput);
+	}
+
+	static String^ ToManaged(std::string objInput)
+	{
+		int len = static_cast<int>(objInput.length());
+
+		if (len > 0)
+		{
+			System::Text::UTF8Encoding encoder;
+			array<unsigned char>^ d = gcnew array<unsigned char>(len);
+			pin_ptr<unsigned char> d_st(&d[0]);
+
+			memcpy(d_st, &objInput[0], sizeof(unsigned char) * len);
+
+			return encoder.GetString(d, 0, len);
+		}
+
+		return System::String::Empty;
+	}
+
+#pragma endregion
 }

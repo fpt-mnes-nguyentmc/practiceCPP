@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#include <iostream>
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -105,6 +103,7 @@ public:
 		{
 			for (int j = 0; j < m_iCols; j++)
 			{
+				
 				Res_cMatrixTransposesed.pData[j][i] = pData[i][j];
 			}
 		}
@@ -236,8 +235,8 @@ public:
 	{
 		if (this->m_iRows != CMatrix_other.m_iRows || this->m_iCols != CMatrix_other.m_iCols)
 		{
-			std::cout
-				<< "WARNING: Assignment is taking place with by changing the number of rows and columns of the matrix";
+			/*std::cout
+				<< "WARNING: Assignment is taking place with by changing the number of rows and columns of the matrix";*/
 		}
 		for (int i = 0; i < m_iRows; i++)
 			delete[] pData[i];
@@ -263,9 +262,98 @@ public:
 	/// </summary>
 	/// <param name="matrix">The p matrix.</param>
 	/// <returns>Result =>number 3x1 3W matrix to CMatrix</returns>
-	CMatrix find3WMatrix (const CMatrix &a){
-		CMatrix CMatrix_vt = this->Transpose();
-		CMatrix CMatrix_result = (CMatrix_vt*(*this)).Inverse()*CMatrix_vt*a;
+	double** find3WMatrix (double P[4][1]){
+
+		double vTransposed[3][4];
+		double vMultiply[3][3];
+		double vMultiply_Inverse[3][3];
+
+		double cc[3][4];
+
+		double** cc1;
+		cc1 = new double*[4];
+		for (int i = 0; i < 4; i++){
+			cc1[i] = new double[1];
+			cc1[i][0] = 0.0;
+		}
+
+		std::fill(vTransposed[0], vTransposed[0] + 3 * 4, 0);
+		std::fill(vMultiply[0], vMultiply[0] + 3 * 3, 0);
+		std::fill(vMultiply_Inverse[0], vMultiply_Inverse[0] + 3 * 3, 0);
+		std::fill(cc[0], cc[0] + 3 * 4, 0);
+		
+		//====> VT[3,4] - Transpose Matrix 
+		for (int i = 0; i < m_iRows; i++)
+		{
+			for (int j = 0; j < m_iCols; j++)
+			{
+				vTransposed[j][i] = this->pData[i][j];
+			}
+		} //<==== return vTransposed[3,4]
+		
+		//====> VT[3,4] * V[4,3] Matrix 
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (int k = 0; k < 4; k++)
+				{
+					vMultiply[i][j] += vTransposed[i][k]
+					* this->pData[k][j];
+				}
+			}
+		} //<==== return vMultiply[3,3]
+
+		// =====> Calculate Inverse for [3,3] matrix
+		double det = vMultiply[0][0] * (vMultiply[1][1] * vMultiply[2][2] - vMultiply[2][1] * vMultiply[1][2]) -
+			vMultiply[0][1] * (vMultiply[1][0] * vMultiply[2][2] - vMultiply[1][2] * vMultiply[2][0]) +
+			vMultiply[0][2] * (vMultiply[1][0] * vMultiply[2][1] - vMultiply[1][1] * vMultiply[2][0]);
+
+		double invdet = 1.0 / det;
+
+		vMultiply_Inverse[0][0] = (vMultiply[1][1] * vMultiply[2][2] - vMultiply[2][1] * vMultiply[1][2]) * invdet;
+		vMultiply_Inverse[0][1] = (vMultiply[0][2] * vMultiply[2][1] - vMultiply[0][1] * vMultiply[2][2]) * invdet;
+		vMultiply_Inverse[0][2] = (vMultiply[0][1] * vMultiply[1][2] - vMultiply[0][2] * vMultiply[1][1]) * invdet;
+		vMultiply_Inverse[1][0] = (vMultiply[1][2] * vMultiply[2][0] - vMultiply[1][0] * vMultiply[2][2]) * invdet;
+		vMultiply_Inverse[1][1] = (vMultiply[0][0] * vMultiply[2][2] - vMultiply[0][2] * vMultiply[2][0]) * invdet;
+		vMultiply_Inverse[1][2] = (vMultiply[1][0] * vMultiply[0][2] - vMultiply[0][0] * vMultiply[1][2]) * invdet;
+		vMultiply_Inverse[2][0] = (vMultiply[1][0] * vMultiply[2][1] - vMultiply[2][0] * vMultiply[1][1]) * invdet;
+		vMultiply_Inverse[2][1] = (vMultiply[2][0] * vMultiply[0][1] - vMultiply[0][0] * vMultiply[2][1]) * invdet;
+		vMultiply_Inverse[2][2] = (vMultiply[0][0] * vMultiply[1][1] - vMultiply[1][0] * vMultiply[0][1]) * invdet;
+
+		// <===== Calculate Inverse for [3,3] matrix
+
+		//====> 1/(VTV)[3,3] * VT[3,4] Matrix 
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				for (int k = 0; k < 3; k++)
+				{
+					cc[i][j] += vMultiply_Inverse[i][k]
+					* vTransposed[k][j];
+				}
+			}
+		} //<==== return cc[3,4]
+
+
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 1; j++)
+			{
+				for (int k = 0; k < 4; k++)
+				{
+					cc1[i][j] += cc[i][k]
+					* P[k][j];
+				}
+			}
+		}//<==== return [3,1] matrix
+		cc1[3][0] = 1 -  cc1[0][0] - cc1[1][0] - cc1[2][0];
+
+		return cc1;
+
+		/*CMatrix CMatrix_vt = this->Transpose();
+		CMatrix CMatrix_result = (CMatrix_vt*(*this)).Inverse()*CMatrix_vt*P;
 		CMatrix CMatrix_w(4,1);
 		double w4 = 1;
 		for(int i = 0 ; i < 3; i++){
@@ -273,50 +361,7 @@ public:
 			CMatrix_w.pData[i][0] = CMatrix_result.pData[i][0];
 		}
 		CMatrix_w.pData[3][0]=w4;
-		return CMatrix_w;
+		CMatrix res(CMatrix_w);
+		return res;*/
 	}
-
-	friend std::istream& operator >> (std::istream &is, CMatrix &m);
-	friend std::ostream& operator <<(std::ostream &os, const CMatrix &m);
-};
-
-std::istream& operator >> (std::istream &is, CMatrix &m)
-{
-	std::cout << "\n\nRows: "
-		<< m.m_iRows << " Cols: " << m.m_iCols << "\n";
-	for (int i = 0; i < m.m_iRows; i++)
-	{
-		for (int j = 0; j < m.m_iCols; j++)
-		{
-			std::cout << "Input For Row: " << i + 1 << " Col: " << j + 1
-				<< " = ";
-			is >> m.pData[i][j];
-		}
-		std::cout << "\n";
-	}
-	std::cout << "\n";
-	return is;
-}
-
-std::ostream& operator << (std::ostream &os, const CMatrix &m)
-{
-
-	os << "\n\nRows: " << m.m_iRows << " Cols: "
-		<< m.m_iCols << "\n\n";
-	for (int i = 0; i < m.m_iRows; i++)
-	{
-		os << " | ";
-		for (int j = 0; j < m.m_iCols; j++)
-		{
-			char buf[32];
-			double data = m.pData[i][j];
-			if (m.pData[i][j] > -0.00001 && m.pData[i][j] < 0.00001)
-				data = 0;
-			sprintf(buf, "%10.4lf ", data);
-			os << buf;
-		}
-		os << "|\n";
-	}
-	os << "\n\n";
-	return os;
 };

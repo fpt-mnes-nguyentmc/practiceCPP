@@ -15,11 +15,11 @@ const int gl_zInterDir[8] = { -1, -1,  0,  0, -1, -1,  0, 0 };
 // Constant S element directions for [V1r, V2r, V3r, V4r]
 const int gl_SArrays[5][4][3] = 
 {
-	{ {0, 0, 0}, {0, 1, 0}, {0, 1, 1}, {1, 1, 0} },
-	{ {0, 0, 0}, {0, 0, 1}, {0, 1, 1}, {1, 0, 1} },
-	{ {0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {1, 1, 0} },
-	{ {0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0} },
-	{ {0, 1, 1}, {1, 0, 1}, {1, 1, 0}, {1, 1, 1} }
+    { {0, 0, 0}, {0, 1, 0}, {0, 1, 1}, {1, 1, 0} },
+    { {0, 0, 0}, {0, 0, 1}, {0, 1, 1}, {1, 0, 1} },
+    { {0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {1, 1, 0} },
+    { {0, 0, 0}, {0, 1, 1}, {1, 0, 1}, {1, 1, 0} },
+    { {0, 1, 1}, {1, 0, 1}, {1, 1, 0}, {1, 1, 1} }
 };
 // ====================================================================================================
 
@@ -32,14 +32,129 @@ CGamma3DLogic::CGamma3DLogic()
 	this->m_pEvalVol = nullptr;
 	this->m_pRefVol = nullptr;
 	this->m_dWx = this->m_dWy = this->m_dWz = 0;
-	this->m_dThresholdDoseMin = this->m_dMaxDeltaPos = this->m_dMaxDeltaDose = this->m_dRadius = 0.0;
+	this->m_iX = this->m_iY = this->m_iZ = 0;
 }
 
 /// <summary>
-/// Finalizes an instance of the <see cref="CGamma3DLogic"/> class.
+/// Finalizes an instance of the <see cref="CGamma3DLogic" /> class.
 /// </summary>
 CGamma3DLogic::~CGamma3DLogic()
 {
+	// Free the evaluation & ref matrix
+	for (int i = 0; i < this->m_dWx; i++)
+	{
+		for (int j = 0; j < this->m_dWy; j++)
+		{
+			delete[] m_pEvalVol[i][j];
+			delete[] m_pRefVol[i][j];
+		}
+
+		delete[] m_pEvalVol[i];
+		delete[] m_pRefVol[i];
+	}
+
+	delete[] m_pEvalVol;
+	delete[] m_pRefVol;
+}
+
+/// <summary>
+/// Sets the window handle.
+/// </summary>
+/// <param name="pHwnd">The p HWND.</param>
+void CGamma3DLogic::SetImageHostHandle(HWND pHwnd)
+{
+	this->m_pImgHostHwnd = pHwnd;
+	this->m_pImgDC = GetDC(pHwnd);
+}
+
+/// <summary>
+/// Sets the gamma input parameter.
+/// </summary>
+/// <param name="cInputParam">The c input parameter.</param>
+void CGamma3DLogic::SetGammaInputParam(CGammaInput cInputParam)
+{
+	this->m_cInput = cInputParam;
+}
+
+/// <summary>
+/// Calculate the coresponding Dose to each Axis  
+/// </summary>
+/// <param name="iXaxis">The iXaxis input parameter.</param>
+/// <param name="iYaxis">The iYaxis input parameter.</param>
+/// <param name="iZaxis">The iZaxis input parameter.</param>
+/// <param name="dNormalizeNumber">The dNormalizeNumber input parameter.</param>
+void CGamma3DLogic::ExtractGammaVolumeToAxis(int iXaxis, int iYaxis, int iZaxis, double dNormalizeNumber)
+{
+
+	float*** pVols[2] = { this->m_pEvalVol, this->m_pRefVol }; // Get from each volume files
+	float** pDose[2] = { this->m_fDoseRef, this->m_fDoseEval }; // Assign each Dose to each elem
+	int i = 0;
+
+	// To boost performance, Using parrallel to loop 2 type of Volume and process it in the same time
+#if defined(_OPENMP)
+#pragma omp parallel for
+#endif
+	for (int i = 0; i < 2; i++)
+	{ 
+		CalculateDose(pDose[i], pVols[i], iXaxis, iYaxis, iZaxis, this->m_dWx, this->m_dWy, this->m_dWz);
+	}
+
+	this->m_cAxisOutput.pDoseEval = pDose[0];
+
+	// pDoseRef: multiply to dNormalizeNumber
+	for(i ; i < m_dWx ; i++)
+	{
+		pDose[1][0][i] *= dNormalizeNumber;
+		pDose[1][1][i] *= dNormalizeNumber;
+		pDose[1][2][i] *= dNormalizeNumber;
+	}
+
+	this->m_cAxisOutput.pDoseRef = pDose[1];
+	this->m_cAxisOutput.m_iWsize = this->m_dWx;
+
+	free(pDose);
+	free(pVols);
+}
+
+
+/// <summary>
+/// Extract Dose value to each Axis  
+/// </summary>
+/// <param name="pDose">The pDose input/output parameter.</param>
+/// <param name="pVols">The pVols input parameter.</param>
+/// <param name="iXaxis">The iXaxis input parameter.</param>
+/// <param name="iYaxis">The iYaxis input parameter.</param>
+/// <param name="iZaxis">The iZaxis input parameter.</param>
+/// <param name="iWx">The iWx input parameter - wide X.</param>
+/// <param name="iWy">The iWy input parameter - wide Y.</param>
+/// <param name="iWz">The iWz input parameter - wide Z.</param>
+void CGamma3DLogic::CalculateDose(float** pDose, float*** pVols, int iXaxis, int iYaxis, int iZaxis, int iWx, int iWy, int iWz)
+{
+	pDose[0] = new float[iWx]; //pDose[0][X elems]
+	pDose[1] = new float[iWy]; //pDose[1][Y elems]
+	pDose[2] = new float[iWz]; //pDose[2][Z elems]
+
+	/*for (int i = 0; i < iWx; i++)
+	{
+		pDose[0][i] = pVols[i][iYaxis][iZaxis];
+	}
+
+	for (int j = 0; j < iWy; j++)
+	{
+		pDose[1][j] = pVols[iXaxis][j][iZaxis];
+	}
+
+	for (int k = 0; k < iWz; k++)
+	{
+		pDose[2][k] = pVols[iXaxis][iYaxis][k];
+	}*/
+
+	for (int i = 0; i < iWx; i++)
+	{
+		pDose[0][i] = pVols[i][iYaxis][iZaxis];
+		pDose[1][i] = pVols[iXaxis][i][iZaxis];
+		pDose[2][i] = pVols[iXaxis][iYaxis][i];
+	}
 }
 
 /// <summary>
@@ -63,18 +178,25 @@ void CGamma3DLogic::ExtractGammaVolume(const std::string& strEvalFilePath, const
 	fseek(pEvalFile, 0, SEEK_END);
 	fseek(pRefFile, 0, SEEK_END);
 
-	if(ftell(pEvalFile) != ftell(pRefFile))
+	long lSize = ftell(pEvalFile);
+	
+	if(lSize != ftell(pRefFile))
 	{
 		// TODO: Check Wx, Wy, Wz different here
 		return;
 	}
+
+	// Determine Width, Height, Depth of volume size
+	this->m_dWx = this->m_dWy = this->m_dWz = (int)(pow(lSize / 4.0, 1.0 / 3.0) + 0.5);
+
+	// Init space for volsize
+	InitVolSize();
 
 	rewind (pEvalFile);
 	rewind (pRefFile);
 
 	FILE* lstFile[2] = { pEvalFile, pRefFile };
 	float*** pVols[2] = { this->m_pEvalVol, this->m_pRefVol };
-	int dWs[2][3] = { 0 };
 
 	// To boost performance, Using parrallel to loop 2 file and process it in the same time
 #if defined(_OPENMP)
@@ -82,7 +204,7 @@ void CGamma3DLogic::ExtractGammaVolume(const std::string& strEvalFilePath, const
 #endif
 	for (int i = 0; i < 2; i++)
 	{
-		ReadAndMappingFile(lstFile[i], pVols[i], dWs[i][0], dWs[i][1], dWs[i][2]);
+		ReadAndMappingFile(lstFile[i], pVols[i]);
 	}
 
 	// Close the Evaluation volume file
@@ -95,35 +217,49 @@ void CGamma3DLogic::ExtractGammaVolume(const std::string& strEvalFilePath, const
 }
 
 /// <summary>
+/// Initializes the size of the vol.
+/// </summary>
+void CGamma3DLogic::InitVolSize()
+{
+	// Initialize [Exam, Reference & Gamma] volume
+	this->m_pEvalVol = new float**[this->m_dWx];
+	this->m_pRefVol = new float**[this->m_dWx];
+	this->m_pGammaVol = new float**[this->m_dWx];
+
+	for (int i = 0; i < this->m_dWx; i++)
+	{
+		this->m_pEvalVol[i] = new float*[this->m_dWy];
+		this->m_pRefVol[i] = new float*[this->m_dWy];
+		this->m_pGammaVol[i] = new float*[this->m_dWy];
+
+		for (int j = 0; j < this->m_dWy; j++)
+		{
+			this->m_pEvalVol[i][j] = new float[this->m_dWz];
+			this->m_pRefVol[i][j] = new float[this->m_dWz];
+			this->m_pGammaVol[i][j] = new float[this->m_dWz];
+
+			memset(this->m_pEvalVol[i][j], 0, this->m_dWz * sizeof(float));
+			memset(this->m_pRefVol[i][j], 0, this->m_dWz * sizeof(float));
+			memset(this->m_pGammaVol[i][j], 0, this->m_dWz * sizeof(float));
+		}
+	}
+}
+
+/// <summary>
 /// Reads the and mapping file.
 /// </summary>
 /// <param name="strFile">The string file.</param>
 /// <param name="pVol">The p vol.</param>
-void CGamma3DLogic::ReadAndMappingFile(FILE* pFile, float*** pVol, int& Wx, int &Wy, int& Wz)
+void CGamma3DLogic::ReadAndMappingFile(FILE* pFile, float*** pVol)
 {
+	// Create buffer to read file
+	char* buffer = new char[BUFFER_SIZE];
+	int length = 0, index = 0;
+
 	// obtain file size:
 	fseek(pFile , 0, SEEK_END);
 	long lSize = ftell(pFile);
 	rewind(pFile);
-
-	// Create buffer to read file
-	char* buffer = new char[BUFFER_SIZE];
-	int N, length = 0, index = 0;
-
-	// Determine Width, Height, Depth of volume size
-	Wx = Wy = Wz = (int)(pow(lSize / 4.0, 1.0 / 3.0) + 0.5);
-
-	// Initialize [Examl & Reference] volume
-	pVol = new float**[Wx];
-	for (int i = 0; i < Wx; i++)
-	{
-		pVol[i] = new float*[Wy];
-		for (int j = 0; j < Wy; j++)
-		{
-			pVol[i][j] = new float[Wz];
-			memset(pVol[i][j], 0, Wz * sizeof(float));
-		}
-	}
 
 	// Read buffer file and remember it into the matrix volume
 	while ((length = fread(buffer, 1, BUFFER_SIZE, pFile)) > 0)
@@ -132,9 +268,9 @@ void CGamma3DLogic::ReadAndMappingFile(FILE* pFile, float*** pVol, int& Wx, int 
 		for(int n = 0, i = 0, j = 0, k = 0, idx = 0; n < length; n += 4)
 		{
 			idx = (index + n) / 4;
-			i = idx % Wx;
-			j = (idx / Wx) % Wy;
-			k = idx / (Wx * Wy);
+			i = idx % this->m_dWx;
+			j = (idx / this->m_dWx) % this->m_dWy;
+			k = idx / (this->m_dWx * this->m_dWy);
 
 			// Store voxel into the matrix volume
 			pVol[i][j][k] = *(float*)(buffer + n);
@@ -145,7 +281,7 @@ void CGamma3DLogic::ReadAndMappingFile(FILE* pFile, float*** pVol, int& Wx, int 
 	}
 
 	// Free buffer file
-	free(buffer);
+	delete[] buffer;
 }
 
 /// <summary>
@@ -157,11 +293,11 @@ void CGamma3DLogic::ImplementAlgorithm()
 	int temp = 0;
 
 	// TODO: Hard code the search distance radius
-	int dRadiusSquared = this->m_dRadius * this->m_dRadius;
-	int iDiameter = this->m_dRadius * 2;
+	int dRadiusSquared = this->m_cInput.m_dRadius * this->m_cInput.m_dRadius;
+	int iDiameter = this->m_cInput.m_dRadius * 2;
 
 	// The center position of translate matrix
-	TPoint4D pCenPos(this->m_dRadius, this->m_dRadius, this->m_dRadius, 0);
+	TPoint4D pCenPos(this->m_cInput.m_dRadius, this->m_cInput.m_dRadius, this->m_cInput.m_dRadius, 0);
 	std::queue<TPoint4D> qPoints;
 	std::vector<TPoint4D> vtTranPoints;
 
@@ -183,7 +319,7 @@ void CGamma3DLogic::ImplementAlgorithm()
 	for (int i = 0; i < 8; i++)
 	{
 		// Find the voxel in the 90 angle 3D
-		TPoint4D p(this->m_dRadius + gl_xInterDir[i], this->m_dRadius + gl_yInterDir[i], this->m_dRadius + gl_zInterDir[i], 1);
+		TPoint4D p(this->m_cInput.m_dRadius + gl_xInterDir[i], this->m_cInput.m_dRadius + gl_yInterDir[i], this->m_cInput.m_dRadius + gl_zInterDir[i], 1);
 
 		// Remember the distance of voxel to 
 		pTransMatrix[p.X][p.Y][p.Z] = p.W;
@@ -242,7 +378,7 @@ void CGamma3DLogic::ImplementAlgorithm()
 			for (int z = 0; z < this->m_dWz; z++)
 			{
 				// Only check the value of point having Dose value larger than [Threshold Dose Min]
-				if (this->m_pEvalVol[x][y][z] > this->m_dThresholdDoseMin)
+				if (this->m_pEvalVol[x][y][z] > this->m_cInput.m_dThresholdDoseMin)
 				{
 					// The examination point
 					TPoint4D pExamPoint(x, y, z, this->m_pEvalVol[x][y][z]);
@@ -251,7 +387,7 @@ void CGamma3DLogic::ImplementAlgorithm()
 					TPoint4D pRefPoint(x, y, z, this->m_pRefVol[x][y][z]);
 
 					// Translate the ref point to the left-top position
-					TPoint4D pRefTranPos(pRefPoint.Substract(this->m_dRadius));
+					TPoint4D pRefTranPos(pRefPoint.Substract(this->m_cInput.m_dRadius));
 
 					std::vector<TPoint4D> vtRefPoints;
 
@@ -269,7 +405,7 @@ void CGamma3DLogic::ImplementAlgorithm()
 							0 <= pDelta.Y && pDelta.Y < this->m_dWy &&
 							0 <= pDelta.Z && pDelta.Z < this->m_dWz &&
 							pTransMatrix[it->X][it->Y][it->Z] > 0 &&
-							this->m_pRefVol[pDelta.X][pDelta.Y][pDelta.Z] >= this->m_dThresholdDoseMin)
+							this->m_pRefVol[pDelta.X][pDelta.Y][pDelta.Z] >= this->m_cInput.m_dThresholdDoseMin)
 						{
 							// Keep the voxel value
 							pDelta.W = this->m_pRefVol[pDelta.X][pDelta.Y][pDelta.Z];
@@ -285,15 +421,15 @@ void CGamma3DLogic::ImplementAlgorithm()
 						for (int S = 0; S < 5; S++)
 						{
 							std::vector<TPoint4D> Vmrs;
-
+						
 							// Determine [V1r, V2r, V3r, V4r]
-							for (int SPos = 0; SPos < 4; SPos++)
-							{
+						    for (int SPos = 0; SPos < 4; SPos++)
+						    {
 								// Determine the position of [V1r, V2r, V3r, V4r]
-								TPoint4D sPoint(it->X + gl_SArrays[S][SPos][0], 
-									it->Y + gl_SArrays[S][SPos][1], 
-									it->Z + gl_SArrays[S][SPos][2],
-									0);
+						        TPoint4D sPoint(it->X + gl_SArrays[S][SPos][0], 
+									            it->Y + gl_SArrays[S][SPos][1], 
+												it->Z + gl_SArrays[S][SPos][2],
+												0);
 
 								// Check out of range of [V1r, V2r, V3r, V4r]
 								if (0 <= sPoint.X && sPoint.X < this->m_dWx &&
@@ -309,7 +445,7 @@ void CGamma3DLogic::ImplementAlgorithm()
 								{
 									break;
 								}
-							}
+						    }
 
 							// Determine matrix [P]:
 							//|-----------------|
@@ -319,10 +455,10 @@ void CGamma3DLogic::ImplementAlgorithm()
 							//| (Dp - D4r) / ΔD |
 							//|-----------------|
 							double P[4][1] = { 
-								{ (pExamPoint.X - Vmrs[3].X) / this->m_dMaxDeltaPos  }, 
-								{ (pExamPoint.Y - Vmrs[3].Y) / this->m_dMaxDeltaPos  },
-								{ (pExamPoint.Z - Vmrs[3].Z) / this->m_dMaxDeltaPos  },
-								{ (pExamPoint.W - Vmrs[3].W) / this->m_dMaxDeltaDose } 
+								{ (pExamPoint.X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos  }, 
+								{ (pExamPoint.Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos  },
+								{ (pExamPoint.Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos  },
+								{ (pExamPoint.W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose } 
 							};
 
 							// Determine matrix [V]:
@@ -333,17 +469,20 @@ void CGamma3DLogic::ImplementAlgorithm()
 							//| (D1r - D4r) / ΔD, (D2r - D4r) / ΔD, (D3r - D4r) / ΔD, |
 							//|-------------------------------------------------------|
 							double V[4][3] = {
-								{ (Vmrs[0].X - Vmrs[3].X) / this->m_dMaxDeltaPos,  (Vmrs[1].X - Vmrs[3].X) / this->m_dMaxDeltaPos,  (Vmrs[2].X - Vmrs[3].X) / this->m_dMaxDeltaPos  },
-								{ (Vmrs[0].Y - Vmrs[3].Y) / this->m_dMaxDeltaPos,  (Vmrs[1].Y - Vmrs[3].Y) / this->m_dMaxDeltaPos,  (Vmrs[2].Y - Vmrs[3].Y) / this->m_dMaxDeltaPos  },
-								{ (Vmrs[0].Z - Vmrs[3].Z) / this->m_dMaxDeltaPos,  (Vmrs[1].Z - Vmrs[3].Z) / this->m_dMaxDeltaPos,  (Vmrs[2].Z - Vmrs[3].Z) / this->m_dMaxDeltaPos  },
-								{ (Vmrs[0].W - Vmrs[3].W) / this->m_dMaxDeltaDose, (Vmrs[1].W - Vmrs[3].W) / this->m_dMaxDeltaDose, (Vmrs[2].W - Vmrs[3].W) / this->m_dMaxDeltaDose },
+								{ (Vmrs[0].X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos,  (Vmrs[1].X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos,  (Vmrs[2].X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos  },
+								{ (Vmrs[0].Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos,  (Vmrs[1].Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos,  (Vmrs[2].Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos  },
+								{ (Vmrs[0].Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos,  (Vmrs[1].Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos,  (Vmrs[2].Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos  },
+								{ (Vmrs[0].W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose, (Vmrs[1].W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose, (Vmrs[2].W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose },
 							};
 
-							double VT[3][4] = {
-								{ (Vmrs[0].X - Vmrs[3].X) / this->m_dMaxDeltaPos, (Vmrs[0].Y - Vmrs[3].Y) / this->m_dMaxDeltaPos, (Vmrs[0].Z - Vmrs[3].Z) / this->m_dMaxDeltaPos, (Vmrs[0].W - Vmrs[3].W) / this->m_dMaxDeltaDose },
-								{ (Vmrs[1].X - Vmrs[3].X) / this->m_dMaxDeltaPos, (Vmrs[1].Y - Vmrs[3].Y) / this->m_dMaxDeltaPos, (Vmrs[1].Z - Vmrs[3].Z) / this->m_dMaxDeltaPos, (Vmrs[1].W - Vmrs[3].W) / this->m_dMaxDeltaDose },
-								{ (Vmrs[2].X - Vmrs[3].X) / this->m_dMaxDeltaPos, (Vmrs[2].Y - Vmrs[3].Y) / this->m_dMaxDeltaPos, (Vmrs[2].Z - Vmrs[3].Z) / this->m_dMaxDeltaPos, (Vmrs[2].W - Vmrs[3].W) / this->m_dMaxDeltaDose },
-							};
+							CMatrix v(V);
+							v.find3WMatrix(P);
+
+							/*double VT[3][4] = {
+								{ (Vmrs[0].X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[0].Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[0].Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[0].W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose },
+								{ (Vmrs[1].X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[1].Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[1].Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[1].W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose },
+								{ (Vmrs[2].X - Vmrs[3].X) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[2].Y - Vmrs[3].Y) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[2].Z - Vmrs[3].Z) / this->m_cInput.m_dMaxDeltaPos, (Vmrs[2].W - Vmrs[3].W) / this->m_cInput.m_dMaxDeltaDose },
+							};*/
 						}
 					}
 				}

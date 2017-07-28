@@ -1,4 +1,0 @@
-D:\FPT_AMED\SourceCode\Source\Common\bin\Debug\Common.dll
-D:\FPT_AMED\SourceCode\Source\Common\bin\Debug\Common.pdb
-D:\FPT_AMED\SourceCode\Source\Common\obj\Debug\Common.dll
-D:\FPT_AMED\SourceCode\Source\Common\obj\Debug\Common.pdb

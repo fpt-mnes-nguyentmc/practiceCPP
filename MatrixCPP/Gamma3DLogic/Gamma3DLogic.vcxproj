@@ -46,7 +46,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>./Headers;..\BasicWrapper\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <OutputFile>..\..\Output\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>

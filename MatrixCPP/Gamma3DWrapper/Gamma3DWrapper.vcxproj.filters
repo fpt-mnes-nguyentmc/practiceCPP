@@ -21,12 +21,18 @@
     <ClInclude Include="Headers\Gamma3DWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Gamma3DWrapperConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CPPs\AssemblyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CPPs\Gamma3DWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CPPs\Gamma3DWrapperConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

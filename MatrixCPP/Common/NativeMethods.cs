@@ -24,12 +24,12 @@ namespace Common
         /// <summary>
         /// The w s_ child
         /// </summary>
-        public const UInt32 WS_CHILD = 0x40000000;
+        public const int WS_CHILD = 0x40000000;
 
         /// <summary>
         /// The w m_ paint
         /// </summary>
-        public const UInt32 WM_PAINT = 0x0f;
+        public const int WM_PAINT = 0x0f;
 
         /// <summary>
         /// The cl blue

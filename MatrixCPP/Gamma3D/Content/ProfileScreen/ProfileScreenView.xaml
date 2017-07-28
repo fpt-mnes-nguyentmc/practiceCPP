@@ -110,6 +110,7 @@
 
             <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0, 0, 0, 1"></Border>
             <Border Grid.Row="4" BorderBrush="Gray" BorderThickness="0, 0, 0, 1"></Border>
+
         </Grid>
     </Grid>
 </UserControl>

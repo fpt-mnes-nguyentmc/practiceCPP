@@ -68,17 +68,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\BasicWrapper.h" />
+    <ClInclude Include="Headers\CDoseOutput.h" />
     <ClInclude Include="Headers\CLIBasicParam.h" />
+    <ClInclude Include="Headers\GammaInput.h" />
     <ClInclude Include="Headers\MatrixSolve.h" />
     <ClInclude Include="Headers\Point4D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CPPs\AssemblyInfo.cpp" />
+    <ClCompile Include="CPPs\BasicWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

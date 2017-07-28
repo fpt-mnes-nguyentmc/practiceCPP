@@ -1,0 +1,4 @@
+D:\FPT_AMED\SourceCode\Output\Debug\Common.dll
+D:\FPT_AMED\SourceCode\Output\Debug\Common.pdb
+D:\FPT_AMED\SourceCode\Source\Common\obj\x64\Debug\Common.dll
+D:\FPT_AMED\SourceCode\Source\Common\obj\x64\Debug\Common.pdb

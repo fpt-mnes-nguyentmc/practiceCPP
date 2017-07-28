@@ -1,3 +1,6 @@
+D:\FPT_AMED\SourceCode\Output\Debug\Gamma3D.exe.config
+D:\FPT_AMED\SourceCode\Output\Debug\Gamma3D.exe
+D:\FPT_AMED\SourceCode\Output\Debug\Gamma3D.pdb
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Gamma3D.csprojResolveAssemblyReference.cache
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Content\InputScreen\InputScreenView.baml
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Content\ProfileScreen\ProfileScreenView.baml
@@ -9,9 +12,6 @@ D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\App.g.cs
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\GeneratedInternalTypeHelper.g.cs
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Gamma3D_MarkupCompile.cache
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Gamma3D_MarkupCompile.lref
-D:\FPT_AMED\SourceCode\Output\Debug\Gamma3D.exe.config
-D:\FPT_AMED\SourceCode\Output\Debug\Gamma3D.exe
-D:\FPT_AMED\SourceCode\Output\Debug\Gamma3D.pdb
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Content\GammaScreen\GammaScreenView.baml
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Gamma3DView.baml
 D:\FPT_AMED\SourceCode\Source\Gamma3D\obj\x64\Debug\Gamma3D.g.resources

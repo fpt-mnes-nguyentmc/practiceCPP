@@ -81,10 +81,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Gamma3DWrapper.h" />
+    <ClInclude Include="Headers\Gamma3DWrapperConverter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CPPs\AssemblyInfo.cpp" />
     <ClCompile Include="CPPs\Gamma3DWrapper.cpp" />
+    <ClCompile Include="CPPs\Gamma3DWrapperConverter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

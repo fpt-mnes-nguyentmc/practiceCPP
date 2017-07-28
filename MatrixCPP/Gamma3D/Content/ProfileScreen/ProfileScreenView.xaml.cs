@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace Gamma3D.Content.Controls
 {
@@ -59,7 +61,7 @@ namespace Gamma3D.Content.Controls
         /// <param name="e"></param>
         private void btnApply_ProfileScreen_Click(object sender, RoutedEventArgs e)
         {
-            checkInputData_ProfileScreen();
+            CheckInvalidInput();
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace Gamma3D.Content.Controls
         /// <param name="e"></param>
         private void btnNext_ProfileScreen_Click(object sender, RoutedEventArgs e)
         {
-            checkInputData_ProfileScreen();
+            CheckInvalidInput();
         }
         #endregion        
 
@@ -81,14 +83,8 @@ namespace Gamma3D.Content.Controls
         /// Check Input Data in Profile Screen
         /// </summary>
         /// <returns></returns>
-        private bool checkInputData_ProfileScreen()
+        private bool CheckInvalidInput()
         {
-            //if (false == this.Logic.isImportVolFile)
-            //{
-            //    MessageBox.Show("Two volume files have not been imported!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //    return false;
-            //}
-
             if (string.IsNullOrWhiteSpace(this.txtXValue.Text) || string.IsNullOrWhiteSpace(this.txtYValue.Text) || string.IsNullOrWhiteSpace(this.txtYValue.Text)
                 || string.IsNullOrWhiteSpace(this.txtNormalizationFactor.Text))
             {
