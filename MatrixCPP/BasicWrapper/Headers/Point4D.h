@@ -54,7 +54,7 @@ public:
 	/// <param name="X">The x.</param>
 	/// <param name="Y">The y.</param>
 	/// <param name="Z">The z.</param>
-	TPoint4D(const double& X, const double& Y, const double& Z, const double& W)
+	TPoint4D(const int& X, const int& Y, const int& Z, const double& W)
 	{
 		this->X = X;
 		this->Y = Y;

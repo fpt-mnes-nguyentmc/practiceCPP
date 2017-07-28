@@ -5,6 +5,7 @@ public:
 	/// The pDoseEval
 	/// </summary>
 	float **pDoseEval;
+
 	/// <summary>
 	/// The pDoseRef
 	/// </summary>
@@ -14,4 +15,11 @@ public:
 	/// The X, Y, Z size 
 	/// </summary>
 	int m_iWsize;
+
+	CDoseOutput()
+	{
+		this->pDoseEval = NULL;
+		this->pDoseRef = NULL;
+		this->m_iWsize = 0;
+	}
 };

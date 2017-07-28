@@ -30,6 +30,11 @@ namespace Gamma3DWrapper
 		this->m_pLogic->SetGammaInputParam(CLI::ToUnmanaged(pGammaModel));
 	}
 
+	void CGamma3DWrapper::DetermineGammaPlane()
+	{
+		this->m_pLogic->ImplementAlgorithm();
+	}
+
 	void CGamma3DWrapper::ExtractGammaVolumeToAxis(Int32 iXAxis, Int32 iYAxis, Int32 iZAxis, Double dNormalize)
 	{
 		int iXA = CLI::ToUnmanaged(iXAxis);

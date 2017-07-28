@@ -223,4 +223,12 @@ namespace Common
         public static extern IntPtr GetDC(IntPtr hWnd);
         #endregion
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal static class UnsafeNativeMethods
+    {
+
+    }
 }

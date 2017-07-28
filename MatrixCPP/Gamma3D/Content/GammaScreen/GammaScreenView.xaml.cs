@@ -98,6 +98,8 @@ namespace Gamma3D.Content.Controls
             }
 
             this.Logic.SetGammaInputParam(plan, posPlan, maxDeltaDose, maxDeltaPos, radius, thresholdDoseMin);
+
+            this.Logic.DetermineGammaPlane();
         }
 
         /// <summary>

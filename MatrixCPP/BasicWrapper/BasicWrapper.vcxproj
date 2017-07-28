@@ -46,6 +46,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>./Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
       <OutputFile>..\..\Output\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
@@ -60,6 +61,7 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>./Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

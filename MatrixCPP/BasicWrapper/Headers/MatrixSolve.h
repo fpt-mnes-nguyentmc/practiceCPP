@@ -30,13 +30,9 @@ public:
 	{
 		pData = new double*[m_iRows];
 		for (int i = 0; i < m_iRows; i++)
-			pData[i] = new double[m_iCols];
-		for (int i = 0; i < m_iRows; i++)
 		{
-			for (int j = 0; j < m_iCols; j++)
-			{
-				pData[i][j] = 0.0;
-			}
+			pData[i] = new double[m_iCols];
+			memset(pData[i], 0, m_iCols * sizeof(double));
 		}
 	}
 
@@ -50,13 +46,9 @@ public:
 	{
 		pData = new double*[m_iRows];
 		for (int i = 0; i < m_iRows; i++)
-			pData[i] = new double[m_iCols];
-		for (int i = 0; i < m_iRows; i++)
 		{
-			for (int j = 0; j < m_iCols; j++)
-			{
-				pData[i][j] = array[i][j];
-			}
+			pData[i] = new double[m_iCols];
+			memcpy(pData[i], array[i], m_iCols * sizeof(double));
 		}
 	}
 
@@ -71,13 +63,9 @@ public:
 		pData = new double*[m_iRows];
 
 		for (int i = 0; i < m_iRows; i++)
-			pData[i] = new double[m_iCols];
-		for (int i = 0; i < m_iRows; i++)
 		{
-			for (int j = 0; j < m_iCols; j++)
-			{
-				pData[i][j] = CMatrix_other.pData[i][j];
-			}
+			pData[i] = new double[m_iCols];
+			memcpy(pData[i], CMatrix_other.pData[i], m_iCols * sizeof(double));
 		}
 	}
 
@@ -231,6 +219,11 @@ public:
 		return result;
 	}
 
+	/// <summary>
+	/// Operator=s the specified c matrix other.
+	/// </summary>
+	/// <param name="CMatrix_other">The c matrix other.</param>
+	/// <returns></returns>
 	CMatrix& operator =(const CMatrix &CMatrix_other)
 	{
 		if (this->m_iRows != CMatrix_other.m_iRows || this->m_iCols != CMatrix_other.m_iCols)
@@ -255,6 +248,16 @@ public:
 			}
 		}
 		return *this;
+	}
+
+	/// <summary>
+	/// Operator[]s the specified index.
+	/// </summary>
+	/// <param name="index">The index.</param>
+	/// <returns></returns>
+	double* operator [](const int index)
+	{
+		return (this->pData[index]);
 	}
 
 	/// <summary>

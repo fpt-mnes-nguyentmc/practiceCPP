@@ -21,6 +21,11 @@ namespace CLI
 		return static_cast<int>(objInput);
 	}
 
+	static float ToUnmanaged(Single objInput)
+	{
+		return static_cast<float>(objInput);
+	}
+
 	static double ToUnmanaged(Double objInput)
 	{
 		return static_cast<double>(objInput);
@@ -57,6 +62,11 @@ namespace CLI
 	static Int32 ToManaged(const int& objInput)
 	{
 		return static_cast<Int32>(objInput);
+	}
+
+	static Single ToManaged(const float& objInput)
+	{
+		return static_cast<Single>(objInput);
 	}
 
 	static Double ToManaged(const double& objInput)

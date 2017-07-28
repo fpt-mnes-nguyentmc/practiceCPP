@@ -42,6 +42,10 @@ namespace Gamma3DWrapper
 		void ExtractGammaVolume(String^ strEvalFilePath, String^ strRefFilePath);
 
 		/// <summary>
+		/// Determines the gamma plane.
+		/// </summary>
+		void DetermineGammaPlane();		
+
 		/// Extracts the vol file to X,Y,Z axis.
 		/// </summary>
 		/// <param name="strEvalFilePath">The string eval file path.</param>

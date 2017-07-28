@@ -120,6 +120,14 @@ namespace Gamma3D.Content
         }
 
         /// <summary>
+        /// Determines the gamma plane.
+        /// </summary>
+        public void DetermineGammaPlane()
+        {
+            this.wrapper.DetermineGammaPlane();
+        }
+
+        /// <summary>
         /// Extract Gamma Volume To Axis.
         /// </summary>
         public void ExtractGammaVolumeToAxis(Int32 iXAxis, Int32 iYAxis, Int32 iZAxis, Double dNormalize)

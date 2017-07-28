@@ -129,6 +129,7 @@ namespace DicomExtractor
             var csvPath = this.txtFolderCSV.Text.Trim();
             var dcmFiles = new List<string>();
             bool isSuccess = true;
+            bool isCreateNewFile = false;
 
             if (string.IsNullOrWhiteSpace(dcmPath) || string.IsNullOrWhiteSpace(csvPath))
             {
@@ -179,36 +180,138 @@ namespace DicomExtractor
                 {
                     // Using parallel to boost performance here
                     //foreach(string file in dcmFiles)
-                    Parallel.ForEach(dcmFiles, file =>                    
+                    Parallel.ForEach(dcmFiles, file =>
                     {
-                        // Sleep at Palallel when showing dialog box
-                        while (this.isPause)
-                        {
-                            Thread.Sleep(100);
-                        }
-
-                        // Exit Parallel if choose Yes on Cancel dialog
-                        if (this.isCancel)
-                        {
-                            return;
-                        }
-
                         try
                         {
+                            // Sleep at Palallel when showing dialog box
+                            while (this.isPause)
+                            {
+                                Thread.Sleep(100);
+                            }
+
+                            // Exit Parallel if choose isCancel = true
+                            if (this.isCancel)
+                            {
+                                return;
+                            }
+
                             // Extract dicom file
                             var result = ExtractDicomFile(file);
 
-                            // Get file name from path
+                            // Create Dictionary for Spot Meter Zero and Non-zero
+                            var dicEnergyZero = new Dictionary<string, List<double>>();
+                            var dicEnergyNonZero = new Dictionary<string, List<double>>();
+
+                            CreateDictionary(result, ref dicEnergyZero, ref dicEnergyNonZero);
+
+                            // Get fileName from import path
                             string fileName = System.IO.Path.GetFileName(file);
 
-                            // Export to CSV SPOT file
-                            ExportCsvSpotFile(result, fileName, csvPath);
+                            // Get file name from path
+                            string fileNameCsvSpot = GetCsvSpotFilePath(fileName, csvPath);
+                            string fileNameCsvCp = GetCsvCpFilePath(fileName, csvPath);
+                            string fileNameMac = GetMacFilePath(fileName, csvPath);
 
-                            // Export to CSV CP file
-                            ExportCsvCpFile(result, fileName, csvPath);
+                            // Sleep at Palallel when showing dialog box
+                            while (this.isPause)
+                            {
+                                Thread.Sleep(100);
+                            }
 
-                            // Export to mac file
-                            ExportMacFile(result, fileName, csvPath);
+                            // Exit Parallel if choose isCancel = true
+                            if (this.isCancel)
+                            {
+                                return;
+                            }
+
+                            if (System.IO.File.Exists(fileNameCsvSpot) || System.IO.File.Exists(fileNameCsvCp) || System.IO.File.Exists(fileNameMac))
+                            {
+                                // Sleep at Palallel when showing dialog box
+                                while (this.isPause)
+                                {
+                                    Thread.Sleep(100);
+                                }
+
+                                // Exit Parallel if choose isCancel = true
+                                if (this.isCancel)
+                                {
+                                    return;
+                                }
+
+                                this.isPause = true;
+
+                                lock (this)
+                                {
+                                    if (System.IO.File.Exists(fileNameCsvSpot))
+                                    {
+                                        var dlgResult = new System.Windows.MessageBoxResult();
+
+                                        System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
+                                        {
+                                            dlgResult = MessageBox.Show(string.Format("File {0} already exists.\nDo you want to overwrite it?", fileNameCsvSpot), "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                        }), System.Windows.Threading.DispatcherPriority.Send, null);
+
+                                        if (dlgResult == System.Windows.MessageBoxResult.No)
+                                        {
+                                            isCreateNewFile = true;
+                                        }
+                                    }
+                                    // Export to CSV SPOT file
+                                    ExportCsvSpotFile(result, fileNameCsvSpot, isCreateNewFile, dicEnergyZero, dicEnergyNonZero);
+
+                                    isCreateNewFile = false;
+                                    if (System.IO.File.Exists(fileNameCsvCp))
+                                    {
+                                        var dlgResult = new System.Windows.MessageBoxResult();
+
+                                        System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
+                                        {
+                                            dlgResult = MessageBox.Show(string.Format("File {0} already exists.\nDo you want to overwrite it?", fileNameCsvCp), "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                        }), System.Windows.Threading.DispatcherPriority.Send, null);
+
+                                        if (dlgResult == System.Windows.MessageBoxResult.No)
+                                        {
+                                            isCreateNewFile = true;
+                                        }
+                                    }
+                                    //// Export to CSV CP file
+                                    ExportCsvCpFile(result, fileNameCsvCp, isCreateNewFile, dicEnergyZero, dicEnergyNonZero);
+
+                                    isCreateNewFile = false;
+                                    if (System.IO.File.Exists(fileNameMac))
+                                    {
+                                        var dlgResult = new System.Windows.MessageBoxResult();
+
+                                        System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
+                                        {
+                                            dlgResult = MessageBox.Show(string.Format("File {0} already exists.\nDo you want to overwrite it?", fileNameMac), "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                        }), System.Windows.Threading.DispatcherPriority.Send, null);
+
+                                        if (dlgResult == System.Windows.MessageBoxResult.No)
+                                        {
+                                            isCreateNewFile = true;
+                                        }
+                                    }
+                                    //// Export to MAC file
+                                    ExportMacFile(result, fileNameMac, isCreateNewFile, dicEnergyZero, dicEnergyNonZero);
+                                }
+
+                                this.isPause = false;
+                            }
+                            else
+                            {
+                                isCreateNewFile = false;
+
+                                // Export to CSV SPOT file
+                                ExportCsvSpotFile(result, fileNameCsvSpot, isCreateNewFile, dicEnergyZero, dicEnergyNonZero);
+
+                                //// Export to CSV CP file
+                                ExportCsvCpFile(result, fileNameCsvCp, isCreateNewFile, dicEnergyZero, dicEnergyNonZero);
+
+                                //// Export to MAC file
+                                ExportMacFile(result, fileNameMac, isCreateNewFile, dicEnergyZero, dicEnergyNonZero);
+                            }
                         }
                         catch (NullReferenceException ex)
                         {
@@ -226,7 +329,7 @@ namespace DicomExtractor
                             {
                                 this.isPause = false;
                                 return;
-                            }                          
+                            }
 
                             var dlgResult = new System.Windows.MessageBoxResult();
 
@@ -238,27 +341,21 @@ namespace DicomExtractor
                             if (dlgResult == System.Windows.MessageBoxResult.Yes)
                             {
                                 this.isPause = false;
-
-                                //// Update percentage woking
-                                //System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                                //{
-                                //    this.progressBar.Value += step;
-                                //}), System.Windows.Threading.DispatcherPriority.Send, null);                              
                             }
                             else
-                            {                                
+                            {
                                 this.isCancel = true;
                                 this.isPause = false;
                                 isSuccess = false;
                                 return;
-                            }                            
+                            }
                         }
                         catch (Exception ex)
                         {
                             System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
                             {
                                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            }), System.Windows.Threading.DispatcherPriority.Send, null);  
+                            }), System.Windows.Threading.DispatcherPriority.Send, null);
 
                             this.isPause = false;
                             this.isCancel = true;
@@ -272,7 +369,7 @@ namespace DicomExtractor
                         {
                             this.progressBar.Value += step;
                         }), System.Windows.Threading.DispatcherPriority.Send, null);
-                    //}
+                        //}
                     });
 
                     GC.Collect();
@@ -282,8 +379,8 @@ namespace DicomExtractor
                     System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
                         MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }), System.Windows.Threading.DispatcherPriority.Send, null);   
-                    
+                    }), System.Windows.Threading.DispatcherPriority.Send, null);
+
                     isSuccess = false;
                 }
 
@@ -295,7 +392,7 @@ namespace DicomExtractor
                     if (!isSuccess)
                     {
                         this.progressBar.Value = 0;
-                        this.txtFileCount.Text = string.Empty;                        
+                        this.txtFileCount.Text = string.Empty;
                     }
                 }), System.Windows.Threading.DispatcherPriority.Send, null);
             });
@@ -327,6 +424,7 @@ namespace DicomExtractor
                 this.isPause = false;
             }
         }
+
         #endregion
 
         #region Properties Changed
@@ -515,7 +613,7 @@ namespace DicomExtractor
                                     throw new NullReferenceException("VR value of Ion Control Point Sequence tag (3008,0041) is not [SQ] type in file " + path);
                                 }
                             }
-                            else 
+                            else
                             {
                                 throw new NullReferenceException("Can not find Ion Control Point Sequence tag (3008, 0041) in file " + path);
                             }
@@ -553,20 +651,15 @@ namespace DicomExtractor
         /// </summary>
         /// <param name="lstExtractObject">The data Extract from Dicom file</param>
         /// <param name="file">The file name</param>
-        /// <param name="pathCSVFoder">The folder directory to cxport CSV SPOT file </param>
-        private void ExportCsvSpotFile(List<ExtractorObject> lstExtractObject, string file, string pathCSVFoder)
+        /// <param name="isCreateNew">Overwrite or create new file</param>
+        /// <param name="dicEnergyZero">Contain Energy (Control Point) which has zero spot meter</param>
+        /// <param name="dicEnergyNonZero">Contain Energy (Control Point) which has non-zero spot meter</param>
+        private void ExportCsvSpotFile(List<ExtractorObject> lstExtractObject, string file, bool isCreateNew, Dictionary<string, List<double>> dicEnergyZero, Dictionary<string, List<double>> dicEnergyNonZero)
         {
             try
             {
                 // Initialize strBuilder to contain data
                 var strBuilder = new StringBuilder();
-
-                if (file.Contains(".dcm"))
-                    file = file.Replace(".dcm", "_SPOT.csv");
-                else
-                    file = file + "_SPOT.csv";
-
-                string path = string.Format(@"{0}\{1}", pathCSVFoder, file);
 
                 // Fill the data into strBuilder like template file
                 strBuilder.AppendLine(string.Format("{0},{1},{2},{3}", "G1", "Data Setting", "SP", "Px"));
@@ -579,73 +672,56 @@ namespace DicomExtractor
                 // Create Order Number
                 uint orderNumber = 0;
 
+                // Dictionary contains Key of Items which are exported
+                var dicGetEnergy = new Dictionary<string, List<double>>();
+
                 // Sum of Spot Meter List in lstExtractObject
                 double sum = lstExtractObject.Sum(obj => obj.SpotMeterList.Sum());
 
                 // Fill the data into strBuilder
                 for (int i = 0; i < lstExtractObject.Count; ++i)
                 {
+                    string strKey = CreateKey(lstExtractObject[i].NomBeamEnergy, lstExtractObject[i].SpotPosition);
+
+                    if (CheckZeroSpotMeterItem(lstExtractObject[i].SpotMeterList))
+                    {
+                        if (dicEnergyNonZero.ContainsKey(strKey) && dicEnergyZero.ContainsKey(strKey) && dicGetEnergy.ContainsKey(strKey))
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (false == dicGetEnergy.ContainsKey(strKey))
+                    {
+                        dicGetEnergy.Add(strKey, lstExtractObject[i].SpotMeterList);
+                    }
+
                     for (int j = 0; j < lstExtractObject[i].SpotMeterList.Count; ++j)
                     {
-                        ++orderNumber;
-
                         if (0 == sum)
                         {
+                            ++orderNumber;
                             strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4}", orderNumber, lstExtractObject[i].SpotPosition[j].X, lstExtractObject[i].SpotPosition[j].Y, null, lstExtractObject[i].SpotMeterList[j]));
                         }
                         else
                         {
+                            ++orderNumber;
                             double weight = lstExtractObject[i].SpotMeterList[j] / sum;
                             strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4}", orderNumber, lstExtractObject[i].SpotPosition[j].X, lstExtractObject[i].SpotPosition[j].Y, weight, lstExtractObject[i].SpotMeterList[j]));
                         }
                     }
                 }
 
-                if (false == System.IO.File.Exists(path))
+                if (false == isCreateNew)
                 {
                     // Export strBuider to Data.csv file
-                    System.IO.File.WriteAllText(path, strBuilder.ToString());
+                    System.IO.File.WriteAllText(file, strBuilder.ToString());
                 }
                 else
                 {
-                    // Sleep to display a single dialog at a time. Waiting on all thread
-                    while (this.isPause)
-                    {
-                        Thread.Sleep(100);
-                    }     
-
-                    // Turn on isPause to display a single dialog at a time
-                    this.isPause = true;
-
-                    // Exit export file if choose isCancel = true
-                    if (this.isCancel)
-                    {
-                        this.isPause = false;
-                        return;
-                    }                 
-
-                    var dlgResult = new System.Windows.MessageBoxResult();
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
-                    {
-                        dlgResult = MessageBox.Show(string.Format("File {0} already exists.\nDo you want to overwrite it?", path), "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    }), System.Windows.Threading.DispatcherPriority.Send, null);           
-                   
-                    if (dlgResult == System.Windows.MessageBoxResult.Yes)
-                    {
-                        // Overwrite
-                        // Export strBuider to .csv file                        
-                        System.IO.File.WriteAllText(path, strBuilder.ToString());
-                    }
-                    else
-                    {
-                        // Create new file for writing
-                        // Export strBuider to .csv file
-                        path = path.Replace(".csv", string.Format("_{0}{1}{2}_{3}{4}{5}.csv", DateTime.Now.Year, DateTime.Now.Month.ToString("00"), DateTime.Now.Day.ToString("00"), DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00"), DateTime.Now.Second.ToString("00")));
-                        System.IO.File.WriteAllText(path, strBuilder.ToString());
-                    }
-
-                    this.isPause = false;
+                    // Export strBuider to .csv file
+                    file = file.Replace(".csv", string.Format("_{0}{1}{2}_{3}{4}{5}.csv", DateTime.Now.Year, DateTime.Now.Month.ToString("00"), DateTime.Now.Day.ToString("00"), DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00"), DateTime.Now.Second.ToString("00")));
+                    System.IO.File.WriteAllText(file, strBuilder.ToString());
                 }
             }
             catch (System.UnauthorizedAccessException unauthorizedAccessException)
@@ -667,8 +743,10 @@ namespace DicomExtractor
         /// </summary>
         /// <param name="lstExtractObject">The data Extract from Dicom file</param>
         /// <param name="file">The file name</param>
-        /// <param name="pathCSVFoder">The folder directory to cxport CSV CP file </param>
-        private void ExportCsvCpFile(List<ExtractorObject> lstExtractObject, string file, string pathCSVFoder)
+        /// <param name="isCreateNew">Overwrite or create new file</param>
+        /// <param name="dicEnergyZero">Contain Energy (Control Point) which has zero spot meter</param>
+        /// <param name="dicEnergyNonZero">Contain Energy (Control Point) which has non-zero spot meter</param>
+        private void ExportCsvCpFile(List<ExtractorObject> lstExtractObject, string file, bool isCreateNew, Dictionary<string, List<double>> dicEnergyZero, Dictionary<string, List<double>> dicEnergyNonZero)
         {
             try
             {
@@ -678,17 +756,6 @@ namespace DicomExtractor
                 // Sum of Spot Meter List in lstExtractObject
                 double sum = lstExtractObject.Sum(obj => obj.SpotMeterList.Sum());
 
-                if (file.Contains(".dcm"))
-                {
-                    file = file.Replace(".dcm", "_CP.csv");
-                }
-                else
-                {
-                    file = file + "_CP.csv";
-                }
-
-                string path = string.Format(@"{0}\{1}", pathCSVFoder, file);
-
                 // Fill the data into strBuilder like template file
                 strBuilder.AppendLine(string.Format("{0},{1},{2},{3}", "G1", "Data Setting", "SP", "Px"));
                 strBuilder.AppendLine(string.Format("{0},{1},{2},{3}", "ID", "Action", "Set MU", "Spot ID"));
@@ -697,64 +764,53 @@ namespace DicomExtractor
                 // Fill title into strBuilder like template file
                 strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", "CP No", "Spot", "Energy", "SP", "Intensity", "Weight", "Remark"));
 
+                // Create Order Number
+                uint orderNumber = 0;
+
+                // Dictionary contains Key of Items which are exported
+                var dicGetEnergy = new Dictionary<string, List<double>>();
+
                 // Fill the data into strBuilder
                 for (int i = 0; i < lstExtractObject.Count; ++i)
                 {
+                    string strKey = CreateKey(lstExtractObject[i].NomBeamEnergy, lstExtractObject[i].SpotPosition);
+
+                    if (CheckZeroSpotMeterItem(lstExtractObject[i].SpotMeterList))
+                    {
+                        if (dicEnergyNonZero.ContainsKey(strKey) && dicEnergyZero.ContainsKey(strKey) && dicGetEnergy.ContainsKey(strKey))
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (false == dicGetEnergy.ContainsKey(strKey))
+                    {
+                        dicGetEnergy.Add(strKey, lstExtractObject[i].SpotMeterList);
+                    }
+
                     if (0 == sum)
                     {
-                        strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", i + 1, lstExtractObject[i].SpotMeterList.Count, lstExtractObject[i].NomBeamEnergy, 3.8, 100, null, "hoge"));
+                        ++orderNumber;
+                        strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", orderNumber, lstExtractObject[i].SpotMeterList.Count, lstExtractObject[i].NomBeamEnergy, 3.8, 100, null, "hoge"));
                     }
                     else
                     {
+                        ++orderNumber;
                         double weight = lstExtractObject[i].SpotMeterList.Sum() / sum;
-                        strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", i + 1, lstExtractObject[i].SpotMeterList.Count, lstExtractObject[i].NomBeamEnergy, 3.8, 100, weight, "hoge"));
+                        strBuilder.AppendLine(string.Format("{0},{1},{2},{3},{4},{5},{6}", orderNumber, lstExtractObject[i].SpotMeterList.Count, lstExtractObject[i].NomBeamEnergy, 3.8, 100, weight, "hoge"));
                     }
                 }
 
-                if (false == System.IO.File.Exists(path))
+                if (false == isCreateNew)
                 {
                     // Export strBuider to Data.csv file
-                    System.IO.File.WriteAllText(path, strBuilder.ToString());
+                    System.IO.File.WriteAllText(file, strBuilder.ToString());
                 }
                 else
                 {
-                    // Sleep to display a single dialog at a time. Waiting on all thread
-                    while (this.isPause)
-                    {
-                        Thread.Sleep(100);
-                    }                                       
-
-                    // Turn on isPause to display a single dialog at a time
-                    this.isPause = true;
-
-                    // Exit export file if choose isCancel = true
-                    if (this.isCancel)
-                    {
-                        this.isPause = false;
-                        return;
-                    }
-
-                    var dlgResult = new System.Windows.MessageBoxResult();
-                    System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
-                    {
-                        dlgResult = MessageBox.Show(string.Format("{0} already exists.\nDo you want to overwrite it?", path), "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    }), System.Windows.Threading.DispatcherPriority.Send, null);                            
-                     
-
-                    if (dlgResult == System.Windows.MessageBoxResult.Yes)
-                    {
-                        // Overwrite
-                        // Export strBuider to Data.csv file
-                        System.IO.File.WriteAllText(path, strBuilder.ToString());
-                    }
-                    else
-                    {
-                        // Create new file for writing
-                        // Export strBuider to Data.csv file
-                        path = path.Replace(".csv", string.Format("_{0}{1}{2}_{3}{4}{5}.csv", DateTime.Now.Year, DateTime.Now.Month.ToString("00"), DateTime.Now.Day.ToString("00"), DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00"), DateTime.Now.Second.ToString("00")));
-                        System.IO.File.WriteAllText(path, strBuilder.ToString());
-                    }
-                    this.isPause = false;
+                    // Export strBuider to .csv file
+                    file = file.Replace(".csv", string.Format("_{0}{1}{2}_{3}{4}{5}.csv", DateTime.Now.Year, DateTime.Now.Month.ToString("00"), DateTime.Now.Day.ToString("00"), DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00"), DateTime.Now.Second.ToString("00")));
+                    System.IO.File.WriteAllText(file, strBuilder.ToString());
                 }
             }
             catch (UnauthorizedAccessException unauthorizedAccessException)
@@ -776,8 +832,10 @@ namespace DicomExtractor
         /// </summary>
         /// <param name="lstExtractObject">The data Extract from Dicom file</param>
         /// <param name="file">The file name</param>
-        /// <param name="pathCSVFoder">The folder directory to cxport mac file </param>
-        private void ExportMacFile(List<ExtractorObject> lstExtractObject, string file, string pathFoder)
+        /// <param name="isCreateNew">Overwrite or create new file</param>
+        /// <param name="dicEnergyZero">Contain Energy (Control Point) which has zero spot meter</param>
+        /// <param name="dicEnergyNonZero">Contain Energy (Control Point) which has non-zero spot meter</param>
+        private void ExportMacFile(List<ExtractorObject> lstExtractObject, string file, bool isCreateNew, Dictionary<string, List<double>> dicEnergyZero, Dictionary<string, List<double>> dicEnergyNonZero)
         {
             try
             {
@@ -785,18 +843,9 @@ namespace DicomExtractor
                 var strBuilder = new StringBuilder();
                 var str = new StringBuilder();
 
-                if (file.Contains(".dcm"))
-                {
-                    file = file.Replace(".dcm", ".mac");
-                }
-                else
-                {
-                    file = file + ".mac";
-                }
-
-                string path = string.Format(@"{0}\{1}", pathFoder, file);
-
-                file = file.Replace(".mac", ".root");
+                // Get file name from path
+                string fileName = System.IO.Path.GetFileName(file);
+                fileName = fileName.Replace(".mac", ".root");
 
                 // Fill the data into strBuilder like template file
                 strBuilder.AppendLine("#Geant4 macro header #########################################");
@@ -812,19 +861,44 @@ namespace DicomExtractor
                 strBuilder.AppendLine("/geometry/setPhantom");
                 strBuilder.AppendLine("#");
                 strBuilder.AppendLine("#File Name ###################################################");
-                strBuilder.AppendLine(string.Format("/data/SetRootFileName ./data/HKDD_eval/{0}", file));
+                strBuilder.AppendLine(string.Format("/data/SetRootFileName ./data/HKDD_eval/{0}", fileName));
                 strBuilder.AppendLine("#");
                 strBuilder.AppendLine("#No of Spot  #################################################");
 
+                // The number of run/beamOn final spot
                 uint count = 0;
-                         
+
+                // The number of spot
+                int number = 0;
+
+                // Dictionary contains Key of Items which are exported
+                var dicGetEnergy = new Dictionary<string, List<double>>();
+
                 // Fill the data into strBuilder
                 for (int i = 0; i < lstExtractObject.Count; ++i)
                 {
+                    string strKey = CreateKey(lstExtractObject[i].NomBeamEnergy, lstExtractObject[i].SpotPosition);
+
+                    if (CheckZeroSpotMeterItem(lstExtractObject[i].SpotMeterList))
+                    {
+                        if (dicEnergyNonZero.ContainsKey(strKey) && dicEnergyZero.ContainsKey(strKey) && dicGetEnergy.ContainsKey(strKey))
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (false == dicGetEnergy.ContainsKey(strKey))
+                    {
+                        dicGetEnergy.Add(strKey, lstExtractObject[i].SpotMeterList);
+                    }
+
                     if (0 != lstExtractObject[i].SpotMeterList[lstExtractObject[i].SpotMeterList.Count - 1])
                     {
                         ++count;
                     }
+
+                    number += lstExtractObject[i].SpotMeterList.Count;
+
                     for (int j = 0; j < lstExtractObject[i].SpotMeterList.Count; ++j)
                     {
                         str.AppendLine("#");
@@ -836,7 +910,7 @@ namespace DicomExtractor
                 }
 
                 strBuilder.AppendLine("/run/NoOfParticle " + count);
-                strBuilder.AppendLine("/run/NoOfSpot " + lstExtractObject.Sum(obj => obj.SpotMeterList.Count));
+                strBuilder.AppendLine("/run/NoOfSpot " + number);
                 strBuilder.AppendLine("#");
                 strBuilder.AppendLine("#Start #######################################################");
 
@@ -845,50 +919,17 @@ namespace DicomExtractor
                 strBuilder.AppendLine("#");
                 strBuilder.AppendLine("#End #########################################################");
 
-                if (false == System.IO.File.Exists(path))
+                if (false == isCreateNew)
                 {
                     // Export strBuider to Data.csv file
-                    System.IO.File.WriteAllText(path, strBuilder.ToString());
+                    System.IO.File.WriteAllText(file, strBuilder.ToString());
                 }
                 else
                 {
-                    // Sleep to display a single dialog at a time. Waiting on all thread
-                    while (this.isPause)
-                    {
-                        Thread.Sleep(100);
-                    }
+                    // Export strBuider to .csv file
+                    file = file.Replace(".mac", string.Format("_{0}{1}{2}_{3}{4}{5}.mac", DateTime.Now.Year, DateTime.Now.Month.ToString("00"), DateTime.Now.Day.ToString("00"), DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00"), DateTime.Now.Second.ToString("00")));
+                    System.IO.File.WriteAllText(file, strBuilder.ToString());
 
-                    // Turn on isPause to display a single dialog at a time
-                    this.isPause = true;
-
-                    // Exit export file if choose isCancel = true
-                    if (this.isCancel)
-                    {
-                        this.isPause = false;
-                        return;
-                    }
-
-                    var dlgResult = new System.Windows.MessageBoxResult();
-                    System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
-                    {
-                        dlgResult = MessageBox.Show(string.Format("{0} already exists.\nDo you want to overwrite it?", path), "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    }), System.Windows.Threading.DispatcherPriority.Send, null);                            
-                     
-
-                    if (dlgResult == System.Windows.MessageBoxResult.Yes)
-                    {
-                        // Overwrite
-                        // Export strBuider to Data.csv file
-                        System.IO.File.WriteAllText(path, strBuilder.ToString());
-                    }
-                    else
-                    {
-                        // Create new file for writing
-                        // Export strBuider to Data.csv file
-                        path = path.Replace(".mac", string.Format("_{0}{1}{2}_{3}{4}{5}.mac", DateTime.Now.Year, DateTime.Now.Month.ToString("00"), DateTime.Now.Day.ToString("00"), DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00"), DateTime.Now.Second.ToString("00")));
-                        System.IO.File.WriteAllText(path, strBuilder.ToString());
-                    }
-                    this.isPause = false;
                 }
             }
             catch (System.UnauthorizedAccessException unauthorizedAccessException)
@@ -904,8 +945,129 @@ namespace DicomExtractor
                 throw ex;
             }
         }
+   
+        /// <summary>
+        /// Get Csv Spot File Path
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="pathFolder"></param>
+        /// <returns></returns>
+        private string GetCsvSpotFilePath(string file, string pathFolder)
+        {
+            if (file.Contains(".dcm"))
+            {
+                file = file.Replace(".dcm", "_SPOT.csv");
+            }
+            else
+            {
+                file = file + "_SPOT.csv";
+            }
+
+            return file = string.Format(@"{0}\{1}", pathFolder, file);
+        }
+
+        /// <summary>
+        /// Get CsvCp File Path
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="pathFolder"></param>
+        /// <returns></returns>
+        private string GetCsvCpFilePath(string file, string pathFolder)
+        {
+            if (file.Contains(".dcm"))
+            {
+                file = file.Replace(".dcm", "_CP.csv");
+            }
+            else
+            {
+                file = file + "_CP.csv";
+            }
+
+            return file = string.Format(@"{0}\{1}", pathFolder, file);
+        }
+
+        /// <summary>
+        /// Get Mac File Path
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="pathFolder"></param>
+        /// <returns></returns>
+        private string GetMacFilePath(string file, string pathFolder)
+        {
+            if (file.Contains(".dcm"))
+            {
+                file = file.Replace(".dcm", ".mac");
+            }
+            else
+            {
+                file = file + ".mac";
+            }
+
+            return file = string.Format(@"{0}\{1}", pathFolder, file);
+        }
+
+        /// <summary>
+        /// Create two dictionary to store key of Energy has all Spot Meter of Item are Zero and Energy has all Spot Meter of Item are Non-Zero
+        /// </summary>
+        /// <param name="lstExtractObject"></param>
+        /// <param name="dicEnergyZero"></param>
+        /// <param name="dicEnergyNonZero"></param>
+        private void CreateDictionary(List<ExtractorObject> lstExtractObject, ref Dictionary<string, List<double>> dicEnergyZero, ref Dictionary<string, List<double>> dicEnergyNonZero)
+        {
+            for (int i = 0; i < lstExtractObject.Count; ++i)
+            {
+                string strKey = CreateKey(lstExtractObject[i].NomBeamEnergy, lstExtractObject[i].SpotPosition);
+
+                if (CheckZeroSpotMeterItem(lstExtractObject[i].SpotMeterList))
+                {
+                    if (false == dicEnergyZero.ContainsKey(strKey))
+                    {
+                        dicEnergyZero.Add(strKey, lstExtractObject[i].SpotMeterList);
+                    }
+                }
+                else
+                {
+                    if (false == dicEnergyNonZero.ContainsKey(strKey))
+                    {
+                        dicEnergyNonZero.Add(strKey, lstExtractObject[i].SpotMeterList);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check all Spot Meter of Item are Zero
+        /// </summary>
+        /// <param name="lstSpotMeter"></param>
+        /// <returns></returns>
+        private bool CheckZeroSpotMeterItem(List<double> lstSpotMeter)
+        {
+            for (int i = 0; i < lstSpotMeter.Count; ++i)
+            {
+                if (0 != lstSpotMeter[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Create Key from nomBeamEnergy and all Spot Position in lstSpotPosition
+        /// </summary>
+        /// <param name="nomBeamEnergy"></param>
+        /// <param name="lstSpotPosition"></param>
+        /// <returns></returns>
+        private string CreateKey(double nomBeamEnergy, List<Point> lstSpotPosition)
+        {
+            string str = nomBeamEnergy.ToString();
+            for (int i = 0; i < lstSpotPosition.Count; ++i)
+            {
+                str = str + lstSpotPosition[i].X.ToString() + lstSpotPosition[i].Y.ToString();
+            }
+            return str;
+        }
 
         #endregion
-
     }
 }

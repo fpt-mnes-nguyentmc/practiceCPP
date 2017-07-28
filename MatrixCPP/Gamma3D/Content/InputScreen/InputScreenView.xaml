@@ -40,7 +40,7 @@
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="Evaluation VOL File" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
-                <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="0, 0, 5,0" Name="txtEvalFile"/>
+                <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="0, 0, 5,0" Name="txtEvalFile" Text="D:\testdata\dose.vol"/>
                 <Button Grid.Column="2" Content="Browse" Name="btnBrowseEvalFile" Click="btnBrowseEvalFile_Click" />
             </Grid>
 
@@ -51,7 +51,7 @@
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
                 <Label Content="Reference VOL File" Grid.Column="0" Background="#555" Foreground="White" HorizontalContentAlignment="Center" />
-                <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="0, 0, 5,0" Name="txtRefFile"/>
+                <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="0, 0, 5,0" Name="txtRefFile"  Text="D:\testdata\dose1.vol"/>
                 <Button Grid.Column="2" Content="Browse" Name="btnBrowseRefFile" Click="btnBrowseRefFile_Click" />
             </Grid>
 

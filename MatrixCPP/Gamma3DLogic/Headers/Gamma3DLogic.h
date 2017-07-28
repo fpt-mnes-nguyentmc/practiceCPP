@@ -1,16 +1,17 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include <stdio.h>
 #include <string>
 #include <queue>
 #include <Windows.h>
+#include <math.h>
 
 #include "Point4D.h"
 #include "MatrixSolve.h"
 #include "GammaInput.h"
 #include "CDoseOutput.h"
-
-
 
 class CGamma3DLogic
 {
@@ -21,12 +22,10 @@ public:
 	void SetGammaInputParam(CGammaInput cInputParam);
 	void SetImageHostHandle(HWND pHwnd);
 	void ExtractGammaVolume(const std::string& strEvalFilePath, const std::string& strRefFilePath);
-	void ExtractGammaVolumeToAxis(int iXaxis, int iYaxis, int iZaxis, double dNormalizeNumber);
-private:
+	void ImplementAlgorithm();	void ExtractGammaVolumeToAxis(int &iXaxis, int &iYaxis, int &iZaxis, double &dNormalizeNumber);private:
 	void InitVolSize();
 	void ReadAndMappingFile(FILE* pFile, float*** pVol);
-	void ImplementAlgorithm();
-	void CalculateDose(float** pDose, float*** pVols, int iXaxis, int iYaxis, int iZaxis, int iWx, int iWy, int iWz);
+	void CalculateDose(float** pDose, float*** pVols, int &iXaxis, int &iYaxis, int &iZaxis, int &iWx);
 
 	HWND    m_pImgHostHwnd;
 	HDC		m_pImgDC;
@@ -34,7 +33,7 @@ private:
 
 	float*** m_pEvalVol;
 	float*** m_pRefVol;
-	float*** m_pGammaVol;
+	double*** m_pGammaVol;
 
 	float** m_fDoseEval;
 	float** m_fDoseRef;
@@ -50,3 +49,4 @@ private:
 
 	CDoseOutput m_cAxisOutput;
 };
+
